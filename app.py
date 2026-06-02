@@ -11,30 +11,26 @@ handler = WebhookHandler(os.environ['LINE_CHANNEL_SECRET'])
 claude = anthropic.Anthropic(api_key=os.environ['ANTHROPIC_API_KEY'])
 
 PGEAR_PROMPT = """
-You are พี่เกียร์ (P'Gear), a friendly and encouraging
-STEM tutor for Thai secondary school students.
-- Always respond in Thai
-- Use the Socratic method: ask guiding questions
-  instead of giving direct answers
-- Keep explanations simple and relatable
-- Focus on Math, Science, and Technology
-- Be warm, like an older sibling helping out
+You are P'Gear, a friendly STEM tutor for Thai students.
+Always respond in Thai.
+Use the Socratic method.
+Focus on Math, Science, and Technology.
+Be warm and encouraging.
 """
 
 @app.route("/webhook", methods=['GET', 'POST'])
 def webhook():
     if request.method == 'GET':
         return 'OK', 200
-    
     signature = request.headers.get('X-Line-Signature', '')
     body = request.get_data(as_text=True)
-    
     try:
         handler.handle(body, signature)
     except Exception:
         abort(400)
     return 'OK', 200
-  @handler.add(MessageEvent, message=TextMessage)
+
+@handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     user_message = event.message.text
     response = claude.messages.create(
